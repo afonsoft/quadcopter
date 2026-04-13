@@ -4,6 +4,7 @@ from task import Task
 
 from keras import layers, models, optimizers, regularizers
 from keras import backend as K
+import keras.ops as ops
 
 import random
 from collections import namedtuple, deque
@@ -87,7 +88,7 @@ class Actor():
     
       # loss function using action value (Q value) gradients 
       action_gradients = layers.Input(shape=(self.action_size,))
-      loss = K.mean(-action_gradients * actions)
+      loss = ops.mean(-action_gradients * actions)
 
       # Incorporate any additional losses here (e.g. from regularizers)
 
@@ -170,7 +171,7 @@ class Critic:
         self.model.compile(optimizer=optimizer, loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
-        action_gradients = K.gradients(Q_values, actions)
+        action_gradients = ops.gradients(Q_values, actions)
 
         # Define an additional function to fetch action gradients (to be used by actor model)
         self.get_action_gradients = K.function(inputs=[*self.model.input, K.learning_phase()],outputs=action_gradients)
